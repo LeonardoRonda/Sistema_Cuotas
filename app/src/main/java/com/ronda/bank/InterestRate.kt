@@ -3,12 +3,6 @@ package com.ronda.bank
 import java.security.KeyStore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-val fechaActual = LocalDate.now()
-val formato = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-val fechaFormateada = fechaActual.format(formato)
-
-
 data class Producto(
     val nombre: String,
     val precio: Double,
@@ -21,7 +15,7 @@ fun main() {
     val carrito = mutableListOf<Producto>()
 
     //Esta opción es para el menu usando while do y un when para el menú de opcion.
-    var opcion = readln().toIntOrNull() ?: 0
+    var numeroCuotas = 0
     do {
         println("=========================================")
         println(" Menu-Pagos En Cuotas ")
@@ -30,8 +24,8 @@ fun main() {
         println("2. Elegir cuotas")
         println("3. Imprimir boleta")
         println("4. Salir")
-        print("Selecciona una opción: ")
-
+        print("Selecciona una opcion: ")
+        var opcion = readln().toIntOrNull() ?: 0
         when(opcion){
             1 -> {
                 println("-----------------------------------------")
@@ -49,43 +43,21 @@ fun main() {
                 println("-----------------------------------------")
                 println("            Elegir cuotas             ")
                 println("-----------------------------------------")
-                println("Ingresa el numero de cuotas: ")
-                println("1. 6 cuotas")
-                println("2. 12 cuotas")
-                println("3. 24 cuotas")
+                println("Ingresa el numero de cuotas (6, 12, 24): ")
                 val cuotas = readln().toInt()
-                val sub = calcularSubtotal(carrito)
-                val i = calcularIGV(sub)
-                val total = calcularTotal(sub,i)
-                // se usa un when para la seleccion de cuotas
-                when (cuotas){
-                    6 -> {
-                        val interes = total * 0.2
-                        val montoTotal = total + interes
-                        val cuota = montoTotal / 6
-                        println("opcion elegida: 6 cuotas")
-                    }
-                    12 -> {
-                        val interes = total * 0.2
-                        val montoTotal = total + interes
-                        val cuota = montoTotal / 6
-                        println("opcion elegida: 12 cuotas")
-                    }
-                    24 -> {
-                        val interes = total * 0.2
-                        val montoTotal = total + interes
-                        val cuota = montoTotal / 6
-                        println("opcion elegida: 24 cuotas")
-                    }
-                    else -> {
-                        println("Opcion no valida, intentelo de nuevo")
-                    }
+                val interes = calcularInteres(cuotas)
+                if (interes > 0.0) {
+                    numeroCuotas = cuotas
+                    println("Cuotas elegidas: $cuotas")
+                    println("Interes calculado: $interes")
+                } else {
+                    println("Numero de cuotas no valido")
                 }
             }
             3 -> {
                 println("")
                 println("=========================================")
-                println(" CARRITO DE COMPRAS - TIENDA TECSUP ")
+                println(" Resumen de la compra ")
                 println("=========================================")
 
 
@@ -96,14 +68,19 @@ fun main() {
                 val i = calcularIGV(sub)
                 val total = calcularTotal(sub,i)
 
-
                 mostrarDetalle( carrito)
                 println(String.format("%-20s %d", "Cantidad de productos:", carrito.size))
                 println(String.format("%-20s S/ %8.2f", "Subtotal:", sub))
                 println(String.format("%-20s S/ %8.2f", "IGV:", i))
                 println(String.format("%-20s S/ %8.2f", "TOTAL A PAGAR:", total))
                 println("=========================================")
-
+                if (numeroCuotas > 0) {
+                    val interes = calcularInteres(numeroCuotas)
+                    val  montoConInteres = total + (total * interes)
+                    println("Monto con interes: $montoConInteres")
+                    println("Numero de cuotas: $numeroCuotas")
+                    mostrarCronograma(montoConInteres, numeroCuotas)
+                }
             }
             4 -> {
                 println("Gracias por su compra")
@@ -140,4 +117,33 @@ fun mostrarDetalle(productos: List<Producto>) {
         a++
     }
     println("---------------------------------------")
+}
+
+fun calcularInteres(cuotas: Int): Double {
+    return when (cuotas) {
+        6 -> 0.2
+        12 -> 0.4
+        24 -> 0.6
+        else -> 0.0
+    }
+}
+fun mostrarCronograma(montoTotal: Double, cuotas: Int){
+    val montoCuota = montoTotal / cuotas
+    val fechaActual = LocalDate.now() // extrae la fecha actual
+    val formato = DateTimeFormatter.ofPattern("dd/MM/yyyy") // le da formato a la fecha
+
+    println("\n=========================================")
+    println("          CRONOGRAMA DE PAGOS            ")
+    println("=========================================")
+    println(String.format("%-10s | %-12s | %-10s", "N° Cuota", "Fecha", "Monto"))
+    println("-----------------------------------------")
+
+    // bucle para cambiar la fecha de la cuota de manera mensual
+    for (i in 1..cuotas) {
+        val fechaPago = fechaActual.plusMonths(i.toLong())
+        println(String.format("%-5d | %-12s | S/ %8.2f", i, fechaPago.format(formato), montoCuota))
+    }
+    println("=========================================\n")
+
+
 }
