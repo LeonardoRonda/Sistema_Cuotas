@@ -1,6 +1,5 @@
 package com.ronda.bank
 
-import java.security.KeyStore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 data class Producto(
