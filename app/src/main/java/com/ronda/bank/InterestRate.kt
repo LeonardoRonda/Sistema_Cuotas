@@ -20,7 +20,8 @@ fun main() {
     val nombreCliente = readln()
     val carrito = mutableListOf<Producto>()
 
-    //Esta opción es para el menu usando while do para el menú de opcion.
+    //Esta opción es para el menu usando while do y un when para el menú de opcion.
+    var opcion = readln().toIntOrNull() ?: 0
     do {
         println("=========================================")
         println(" Menu-Pagos En Cuotas ")
@@ -30,7 +31,6 @@ fun main() {
         println("3. Imprimir boleta")
         println("4. Salir")
         print("Selecciona una opción: ")
-        var opcion = readln().toIntOrNull() ?: 0
 
         when(opcion){
             1 -> {
@@ -54,21 +54,33 @@ fun main() {
                 println("2. 12 cuotas")
                 println("3. 24 cuotas")
                 val cuotas = readln().toInt()
-
+                val sub = calcularSubtotal(carrito)
+                val i = calcularIGV(sub)
+                val total = calcularTotal(sub,i)
+                // se usa un when para la seleccion de cuotas
                 when (cuotas){
-                    1 -> {
-                        val sub = calcularSubtotal(carrito)
-                        val i = calcularIGV(sub)
-                        val total = calcularTotal(sub,i)
+                    6 -> {
                         val interes = total * 0.2
-                        val cuota = total / 6
-                        println("=========================================")
-                        println("
+                        val montoTotal = total + interes
+                        val cuota = montoTotal / 6
+                        println("opcion elegida: 6 cuotas")
+                    }
+                    12 -> {
+                        val interes = total * 0.2
+                        val montoTotal = total + interes
+                        val cuota = montoTotal / 6
+                        println("opcion elegida: 12 cuotas")
+                    }
+                    24 -> {
+                        val interes = total * 0.2
+                        val montoTotal = total + interes
+                        val cuota = montoTotal / 6
+                        println("opcion elegida: 24 cuotas")
+                    }
+                    else -> {
+                        println("Opcion no valida, intentelo de nuevo")
                     }
                 }
-
-                // se usa un when para la seleccion de
-
             }
             3 -> {
                 println("")
@@ -92,6 +104,9 @@ fun main() {
                 println(String.format("%-20s S/ %8.2f", "TOTAL A PAGAR:", total))
                 println("=========================================")
 
+            }
+            4 -> {
+                println("Gracias por su compra")
             }
             else -> {
                 println("Opcion no valida, intentelo de nuevo")
@@ -126,5 +141,3 @@ fun mostrarDetalle(productos: List<Producto>) {
     }
     println("---------------------------------------")
 }
-
-fun mostrarCronograma()
