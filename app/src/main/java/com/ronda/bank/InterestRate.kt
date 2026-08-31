@@ -25,7 +25,7 @@ fun main() {
         println("3. Imprimir boleta")
         println("4. Salir")
         print("Selecciona una opcion: ")
-        var opcion = readln().toIntOrNull() ?: 0
+        val opcion = readln().toIntOrNull() ?: 0
         when(opcion){
             1 -> {
                 println("-----------------------------------------")
