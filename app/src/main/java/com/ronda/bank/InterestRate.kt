@@ -48,7 +48,8 @@ fun main() {
                 if (interes > 0.0) {
                     numeroCuotas = cuotas
                     println("Cuotas elegidas: $cuotas")
-                    println("Interes calculado: $interes")
+                    val interesP = interes * 100
+                    println("Interes calculado: $interesP %")
                 } else {
                     println("Numero de cuotas no valido")
                 }
@@ -137,7 +138,7 @@ fun mostrarCronograma(montoTotal: Double, cuotas: Int){
     println(String.format("%-10s | %-12s | %-10s", "N° Cuota", "Fecha", "Monto"))
     println("-----------------------------------------")
 
-    // bucle para cambiar la fecha de la cuota de manera mensual
+    // uso de un bucle for para poder realizar el cronograma de pagos
     for (i in 1..cuotas) {
         val fechaPago = fechaActual.plusMonths(i.toLong())
         println(String.format("%-5d | %-12s | S/ %8.2f", i, fechaPago.format(formato), montoCuota))
